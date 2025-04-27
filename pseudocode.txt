@@ -1,0 +1,62 @@
+# Pseudocode for Ad Agency Campaign Manager
+
+## Data Structures
+
+### Brand
+- id: unique identifier
+- name: string
+- daily_budget: decimal
+- monthly_budget: decimal
+- daily_spend: decimal (reset daily)
+- monthly_spend: decimal (reset monthly)
+- campaigns: array of Campaign objects
+
+### Campaign
+- id: unique identifier
+- brand_id: foreign key to Brand
+- name: string
+- status: boolean (on/off)
+- start_hour: integer (0-23)
+- end_hour: integer (0-23)
+- daily_spend: decimal
+
+## Functions
+
+### check_and_update_campaign_status()
+- For each brand:
+  - Check if monthly budget exceeded
+    - If yes, turn off all campaigns for that brand
+    - If no, continue
+  - Check if daily budget exceeded
+    - If yes, turn off all campaigns for that brand
+    - If no, continue
+  - For each campaign of the brand:
+    - Check if current hour is within dayparting hours
+      - If yes AND budgets not exceeded, turn on campaign
+      - If no, turn off campaign
+
+### record_spend(campaign_id, amount)
+- Find campaign by id
+- Add amount to campaign daily_spend
+- Add amount to related brand daily_spend
+- Add amount to related brand monthly_spend
+- Check and update campaign status
+
+### reset_daily_budgets()
+- Run at midnight every day
+- For each brand:
+  - Reset daily_spend to 0
+  - Check and update campaign status
+
+### reset_monthly_budgets()
+- Run at midnight on first day of month
+- For each brand:
+  - Reset monthly_spend to 0
+  - Check and update campaign status
+
+### monitor_time()
+- Run periodically (e.g., every hour)
+- Check if it's time to reset daily budgets
+- Check if it's time to reset monthly budgets
+- Check and update campaign status based on dayparting
+
