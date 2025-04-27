@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ad Agency Campaign Manager</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+  <div class="container mx-auto px-4 py-8">
+    <header class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-800">Ad Agency Campaign Manager</h1>
+    </header>
+    
+    <main>
+      <div class="bg-white shadow rounded-lg p-6">
+        <h2 class="text-xl font-semibold mb-4">Dashboard</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div class="bg-blue-50 border-l-4 border-blue-500 p-4">
+            <div class="text-blue-700 font-medium">Total Brands</div>
+            <div class="text-2xl font-bold"><%= stats["total_brands"] %></div>
+          </div>
+          
+          <div class="bg-green-50 border-l-4 border-green-500 p-4">
+            <div class="text-green-700 font-medium">Active Campaigns</div>
+            <div class="text-2xl font-bold"><%= stats["active_campaigns"] %></div>
+          </div>
+          
+          <div class="bg-purple-50 border-l-4 border-purple-500 p-4">
+            <div class="text-purple-700 font-medium">Total Spend Today</div>
+            <div class="text-2xl font-bold">$<%= stats["total_daily_spend"] %></div>
+          </div>
+        </div>
+        
+        <div class="mb-6">
+          <h3 class="text-lg font-medium mb-2">Budget Status</h3>
+          <table class="min-w-full bg-white">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="py-2 px-4 text-left">Brand</th>
+                <th class="py-2 px-4 text-left">Daily Budget</th>
+                <th class="py-2 px-4 text-left">Daily Spend</th>
+                <th class="py-2 px-4 text-left">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              <% brands.each do |brand| %>
+                <tr>
+                  <td class="py-2 px-4"><%= brand["name"] %></td>
+                  <td class="py-2 px-4">$<%= brand["daily_budget"] %></td>
+                  <td class="py-2 px-4">$<%= brand["daily_spend"] %></td>
+                  <td class="py-2 px-4">
+                    <span class="px-2 py-1 <%= brand["status"] == "Active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800" %> rounded-full text-xs">
+                      <%= brand["status"] %>
+                    </span>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-medium mb-2">Campaign Status</h3>
+          <table class="min-w-full bg-white">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="py-2 px-4 text-left">Campaign</th>
+                <th class="py-2 px-4 text-left">Brand</th>
+                <th class="py-2 px-4 text-left">Hours</th>
+                <th class="py-2 px-4 text-left">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              <% campaigns.each do |campaign| %>
+                <tr>
+                  <td class="py-2 px-4"><%= campaign["name"] %></td>
+                  <td class="py-2 px-4"><%= brand_name(campaign["brand_id"]) %></td>
+                  <td class="py-2 px-4"><%= format_hours(campaign["start_hour"], campaign["end_hour"]) %></td>
+                  <td class="py-2 px-4">
+                    <span class="px-2 py-1 <%= campaign["status"] == "Active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800" %> rounded-full text-xs">
+                      <%= campaign["status"] %>
+                    </span>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

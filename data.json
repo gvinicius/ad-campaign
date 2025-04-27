@@ -1,0 +1,92 @@
+{
+  "brands": [
+    {
+      "id": 1,
+      "name": "Nike",
+      "daily_budget": 100.00,
+      "monthly_budget": 3000.00,
+      "daily_spend": 45.75,
+      "monthly_spend": 1250.25,
+      "status": "Active"
+    },
+    {
+      "id": 2,
+      "name": "Adidas",
+      "daily_budget": 120.00,
+      "monthly_budget": 3500.00,
+      "daily_spend": 56.25,
+      "monthly_spend": 1475.50,
+      "status": "Active"
+    },
+    {
+      "id": 3,
+      "name": "Puma",
+      "daily_budget": 80.00,
+      "monthly_budget": 2500.00,
+      "daily_spend": 18.50,
+      "monthly_spend": 875.75,
+      "status": "Active"
+    }
+  ],
+  "campaigns": [
+    {
+      "id": 1,
+      "name": "Nike Running",
+      "brand_id": 1,
+      "start_hour": 8,
+      "end_hour": 20,
+      "daily_spend": 25.50,
+      "status": "Active"
+    },
+    {
+      "id": 2,
+      "name": "Nike Basketball",
+      "brand_id": 1,
+      "start_hour": 10,
+      "end_hour": 22,
+      "daily_spend": 20.25,
+      "status": "Active"
+    },
+    {
+      "id": 3,
+      "name": "Adidas Soccer",
+      "brand_id": 2,
+      "start_hour": 9,
+      "end_hour": 21,
+      "daily_spend": 35.75,
+      "status": "Active"
+    },
+    {
+      "id": 4,
+      "name": "Adidas Originals",
+      "brand_id": 2,
+      "start_hour": 7,
+      "end_hour": 23,
+      "daily_spend": 20.50,
+      "status": "Active"
+    },
+    {
+      "id": 5,
+      "name": "Puma Lifestyle",
+      "brand_id": 3,
+      "start_hour": 10,
+      "end_hour": 18,
+      "daily_spend": 12.75,
+      "status": "Active"
+    },
+    {
+      "id": 6,
+      "name": "Puma Sports",
+      "brand_id": 3,
+      "start_hour": 12,
+      "end_hour": 20,
+      "daily_spend": 5.75,
+      "status": "Inactive"
+    }
+  ],
+  "stats": {
+    "total_brands": 3,
+    "active_campaigns": 5,
+    "total_daily_spend": 120.50
+  }
+}
