@@ -13,8 +13,21 @@
     </header>
     
     <main>
-      <div class="bg-white shadow rounded-lg p-6">
-        <h2 class="text-xl font-semibold mb-4">Dashboard</h2>
+      <div class="bg-white shadow rounded-lg p-6 mb-6">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-semibold">Dashboard</h2>
+          <div class="space-x-2">
+            <a href="/api/check_status" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+              Check Status
+            </a>
+            <a href="/api/reset_daily" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
+              Reset Daily
+            </a>
+            <a href="/api/reset_monthly" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+              Reset Monthly
+            </a>
+          </div>
+        </div>
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div class="bg-blue-50 border-l-4 border-blue-500 p-4">
@@ -34,6 +47,29 @@
         </div>
         
         <div class="mb-6">
+          <h3 class="text-lg font-medium mb-2">Record Campaign Spend</h3>
+          <form action="/api/record_spend" method="post" class="flex flex-wrap gap-2 items-end">
+            <div>
+              <label for="campaign_id" class="block text-sm font-medium text-gray-700">Campaign</label>
+              <select id="campaign_id" name="campaign_id" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                <% campaigns.each do |campaign| %>
+                  <option value="<%= campaign["id"] %>"><%= campaign["name"] %> (<%= brand_name(campaign["brand_id"]) %>)</option>
+                <% end %>
+              </select>
+            </div>
+            <div>
+              <label for="amount" class="block text-sm font-medium text-gray-700">Amount ($)</label>
+              <input type="number" step="0.01" min="0.01" id="amount" name="amount" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+            <div>
+              <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
+                Record Spend
+              </button>
+            </div>
+          </form>
+        </div>
+        
+        <div class="mb-6">
           <h3 class="text-lg font-medium mb-2">Budget Status</h3>
           <table class="min-w-full bg-white">
             <thead class="bg-gray-100">
@@ -41,6 +77,8 @@
                 <th class="py-2 px-4 text-left">Brand</th>
                 <th class="py-2 px-4 text-left">Daily Budget</th>
                 <th class="py-2 px-4 text-left">Daily Spend</th>
+                <th class="py-2 px-4 text-left">Monthly Budget</th>
+                <th class="py-2 px-4 text-left">Monthly Spend</th>
                 <th class="py-2 px-4 text-left">Status</th>
               </tr>
             </thead>
@@ -50,6 +88,8 @@
                   <td class="py-2 px-4"><%= brand["name"] %></td>
                   <td class="py-2 px-4">$<%= brand["daily_budget"] %></td>
                   <td class="py-2 px-4">$<%= brand["daily_spend"] %></td>
+                  <td class="py-2 px-4">$<%= brand["monthly_budget"] %></td>
+                  <td class="py-2 px-4">$<%= brand["monthly_spend"] %></td>
                   <td class="py-2 px-4">
                     <span class="px-2 py-1 <%= brand["status"] == "Active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800" %> rounded-full text-xs">
                       <%= brand["status"] %>
@@ -69,6 +109,7 @@
                 <th class="py-2 px-4 text-left">Campaign</th>
                 <th class="py-2 px-4 text-left">Brand</th>
                 <th class="py-2 px-4 text-left">Hours</th>
+                <th class="py-2 px-4 text-left">Daily Spend</th>
                 <th class="py-2 px-4 text-left">Status</th>
               </tr>
             </thead>
@@ -78,6 +119,7 @@
                   <td class="py-2 px-4"><%= campaign["name"] %></td>
                   <td class="py-2 px-4"><%= brand_name(campaign["brand_id"]) %></td>
                   <td class="py-2 px-4"><%= format_hours(campaign["start_hour"], campaign["end_hour"]) %></td>
+                  <td class="py-2 px-4">$<%= campaign["daily_spend"] %></td>
                   <td class="py-2 px-4">
                     <span class="px-2 py-1 <%= campaign["status"] == "Active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800" %> rounded-full text-xs">
                       <%= campaign["status"] %>

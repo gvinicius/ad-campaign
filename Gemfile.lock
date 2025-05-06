@@ -193,6 +193,7 @@ DEPENDENCIES
   dry-struct (~> 1.6)
   dry-types (~> 1.7)
   dry-validation (~> 1.10)
+  json (~> 2.6)
   pry (~> 0.14)
   puma (~> 6.3)
   rack (~> 2.2)

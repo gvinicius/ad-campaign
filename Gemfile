@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 source 'https://rubygems.org'
-
 ruby '3.3.1'
 
 # Web framework
@@ -20,6 +19,7 @@ gem 'sqlite3', '~> 1.6'
 # Utilities
 gem 'chronic', '~> 0.10.2' # For time parsing
 gem 'dotenv', '~> 2.8'
+gem 'json', '~> 2.6'
 gem 'rake', '~> 13.0'
 gem 'rufus-scheduler', '~> 3.9' # For scheduled tasks
 
@@ -34,4 +34,5 @@ group :test do
   gem 'rspec', '~> 3.12'
 end
 
+# Code quality
 gem 'rubocop', '~> 1.75'

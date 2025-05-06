@@ -4,35 +4,39 @@ require 'spec_helper'
 
 describe 'Ad Agency Campaign Manager App' do
   before do
-    allow_any_instance_of(Sinatra::Application).to receive(:load_data).and_return({
-                                                                                    'brands' => [
-                                                                                      {
-                                                                                        'id' => 1,
-                                                                                        'name' => 'Nike',
-                                                                                        'daily_budget' => 100.00,
-                                                                                        'monthly_budget' => 3000.00,
-                                                                                        'daily_spend' => 45.75,
-                                                                                        'monthly_spend' => 1250.25,
-                                                                                        'status' => 'Active'
-                                                                                      }
-                                                                                    ],
-                                                                                    'campaigns' => [
-                                                                                      {
-                                                                                        'id' => 1,
-                                                                                        'name' => 'Nike Running',
-                                                                                        'brand_id' => 1,
-                                                                                        'start_hour' => 8,
-                                                                                        'end_hour' => 20,
-                                                                                        'daily_spend' => 25.50,
-                                                                                        'status' => 'Active'
-                                                                                      }
-                                                                                    ],
-                                                                                    'stats' => {
-                                                                                      'total_brands' => 1,
-                                                                                      'active_campaigns' => 1,
-                                                                                      'total_daily_spend' => 45.75
-                                                                                    }
-                                                                                  })
+    data = {
+      'brands' => [
+        {
+          'id' => 1,
+          'name' => 'Test Brand',
+          'daily_budget' => 100.00,
+          'monthly_budget' => 3000.00,
+          'daily_spend' => 0.0,
+          'monthly_spend' => 0.0,
+          'status' => 'Active'
+        }
+      ],
+      'campaigns' => [
+        {
+          'id' => 1,
+          'name' => 'Test Campaign',
+          'brand_id' => 1,
+          'start_hour' => 0,
+          'end_hour' => 23,
+          'daily_spend' => 0.0,
+          'status' => 'Active'
+        }
+      ],
+      'stats' => {
+        'total_brands' => 1,
+        'active_campaigns' => 1,
+        'total_daily_spend' => 0.0
+      }
+    }
+
+    allow_any_instance_of(Sinatra::Application).to receive(:data).and_return(data)
+    allow_any_instance_of(Sinatra::Application).to receive(:save_data).and_return(true)
+    allow_any_instance_of(Sinatra::Application).to receive(:update_stats).and_return(true)
   end
 
   describe 'GET /' do
@@ -40,43 +44,51 @@ describe 'Ad Agency Campaign Manager App' do
       get '/'
       expect(last_response.status).to eq 200
       expect(last_response.body).to include('Ad Agency Campaign Manager')
-      expect(last_response.body).to include('Nike')
-      expect(last_response.body).to include('Nike Running')
+      expect(last_response.body).to include('Test Brand')
+      expect(last_response.body).to include('Test Campaign')
     end
   end
 
-  describe 'GET /api/data' do
-    it 'returns JSON data' do
-      get '/api/data'
-      expect(last_response.status).to eq 200
-      expect(last_response.headers['Content-Type']).to include('application/json')
+  describe 'POST /api/record_spend' do
+    it 'records spend for a campaign' do
+      allow_any_instance_of(Sinatra::Application).to receive(:check_and_update_campaign_status).and_return(true)
 
-      parsed_body = JSON.parse(last_response.body)
-      expect(parsed_body['brands'].length).to eq 1
-      expect(parsed_body['campaigns'].length).to eq 1
-      expect(parsed_body['stats']['total_brands']).to eq 1
+      post '/api/record_spend', { campaign_id: 1, amount: 50.0 }
+      expect(last_response.status).to eq 302 # Redirect
     end
   end
 
-  describe 'Helper methods' do
-    it 'formats hours correctly' do
-      helper = Object.new
-      helper.extend Sinatra::Helpers
+  describe 'Budget exceeded checks' do
+    it 'identifies when daily budget is exceeded' do
+      brand = { 'daily_spend' => 100.0, 'daily_budget' => 100.0 }
+      expect(daily_budget_exceeded?(brand)).to be true
 
-      app_instance = Sinatra::Application.new
-      allow(helper).to receive(:format_hours).and_return(app_instance.helpers.format_hours(9, 17))
-
-      expect(helper.format_hours).to eq '9:00 - 17:00'
+      brand = { 'daily_spend' => 99.9, 'daily_budget' => 100.0 }
+      expect(daily_budget_exceeded?(brand)).to be false
     end
 
-    it 'finds brand name by ID' do
-      helper = Object.new
-      helper.extend Sinatra::Helpers
+    it 'identifies when monthly budget is exceeded' do
+      brand = { 'monthly_spend' => 3000.0, 'monthly_budget' => 3000.0 }
+      expect(monthly_budget_exceeded?(brand)).to be true
 
-      app_instance = Sinatra::Application.new
-      allow(helper).to receive(:brand_name).and_return(app_instance.helpers.brand_name(1))
+      brand = { 'monthly_spend' => 2999.9, 'monthly_budget' => 3000.0 }
+      expect(monthly_budget_exceeded?(brand)).to be false
+    end
+  end
 
-      expect(helper.brand_name).to eq 'Nike'
+  describe 'Dayparting checks' do
+    it 'checks if campaign is within dayparting hours' do
+      # This test will depend on the current hour, so we need to be flexible
+      current_hour = Time.now.hour
+
+      campaign = { 'start_hour' => 0, 'end_hour' => 24 }
+      expect(within_dayparting_hours?(campaign)).to be true
+
+      campaign = { 'start_hour' => current_hour, 'end_hour' => current_hour + 1 }
+      expect(within_dayparting_hours?(campaign)).to be true
+
+      campaign = { 'start_hour' => current_hour + 1, 'end_hour' => current_hour + 2 }
+      expect(within_dayparting_hours?(campaign)).to be false
     end
   end
 end

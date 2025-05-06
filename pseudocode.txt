@@ -56,7 +56,6 @@
 
 ### monitor_time()
 - Run periodically (e.g., every hour)
-- Check if it's time to reset daily budgets
-- Check if it's time to reset monthly budgets
+- Check if it is time to reset daily budgets
+- Check if it is time to reset monthly budgets
 - Check and update campaign status based on dayparting
-
